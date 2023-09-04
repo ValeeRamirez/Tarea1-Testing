@@ -32,7 +32,7 @@ class AssertionTrueTestRule(Rule):
         visitor.visit(node)
         return visitor.warningsList()
         
-    # @classmethod
-    # def name(cls):
-    #     return 'assertion-true'
+    @classmethod
+    def name(cls):
+        return 'assertion-true'
     
