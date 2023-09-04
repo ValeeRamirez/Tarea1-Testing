@@ -1,12 +1,7 @@
-from _ast import Assign, Expr, FunctionDef
 from ast import *
-from typing import Any
 from core.rewriter import RewriterCommand
+import ast
 
-class RewriterCommand:
-    def apply(self, ast):
-        # Por defecto retorna el mismo AST sin ninguna modificacion
-        return ast
 
 class NodeInlineVisitor(NodeVisitor):
     def __init__(self):

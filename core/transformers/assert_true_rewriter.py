@@ -1,6 +1,6 @@
 from ast import *
-import ast
 from core.rewriter import RewriterCommand
+import ast
 
 # class RewriterCommand:
 #     def apply(self, ast):
