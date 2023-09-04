@@ -1,4 +1,4 @@
-from .linter_test import *
+from test.linter_test import *
 from core.rules import AssertionTrueTestRule
 from core.rule import *
 
