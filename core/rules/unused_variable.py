@@ -14,7 +14,10 @@ class UnusedVariableVisitor(WarningNodeVisitor):
             variable_name = node.targets[0].id
             if variable_name not in self.variables.keys():
                 self.variables[variable_name] = node.lineno
-            if isinstance(node.value, BinOp): ##pensar si es necesario mas casos!!
+                if isinstance(node.value, Name):
+                    if node.value.id in self.variables.keys(): 
+                        del self.variables[node.value.id]
+            if isinstance(node.value, BinOp): 
                 if isinstance(node.value.left, Name):
                     if node.value.left.id in self.variables.keys():
                         del self.variables[node.value.left.id]
