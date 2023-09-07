@@ -1,5 +1,7 @@
+from _ast import ClassDef
 from ast import *
 import ast
+from typing import Any
 from core.rewriter import RewriterCommand
 
 class NodeSetupVisitor(NodeVisitor):
@@ -7,6 +9,7 @@ class NodeSetupVisitor(NodeVisitor):
         super().__init__()
         self.funciones = {}
         self.erased = []
+        self.cantidadFunciones = 0
 
     def visit_Module(self, node: Module):
         NodeVisitor.generic_visit(self, node)
@@ -34,13 +37,15 @@ class NodeSetupVisitor(NodeVisitor):
                     else:
                         sameValue = False
                         break
-            if not sameValue or len(values) == 1:
+            if not sameValue or len(values) != self.cantidadFunciones:
                 self.erased.append(funcion)
         for funcion in self.erased:
             del self.funciones[funcion]
         print(self.funciones)
 
+
     def visit_FunctionDef(self, node: FunctionDef):
+        self.cantidadFunciones += 1
         NodeVisitor.generic_visit(self, node)
 
     def visit_Assign(self, node: Assign):
@@ -103,6 +108,7 @@ class ExtractSetupCommand(RewriterCommand):
         visitor = NodeSetupVisitor()
         visitor.visit(ast)
         new_tree = fix_missing_locations(ExtractSetupTransformer(visitor.funciones).visit(ast))
+        print(new_tree)
         return new_tree
 
     @classmethod
@@ -110,19 +116,18 @@ class ExtractSetupCommand(RewriterCommand):
         return 'extract-setup'
 
 
-# tree = parse( """class TestX(TestCase):
-#     def test_x(self):
-#         p = Person("Juan", "?")
-#         x = 4
-#         self.assertEquals(p.age(),3)
-#     def test_k(self):
-#         p = Person("Juan", "?")
-#         x = 4
-#         self.assertEquals(p.age(),3)
-#     def test_y(self):
-#         p = Person("Juan", "?")
-#         self.assertEquals(p.name(),"Juan")""")
-
+tree = parse( """class TestX(TestCase):
+    def test_x(self):
+        p = Person("Juan", "?")
+        x = 4
+        self.assertEquals(p.age(),3)
+    def test_k(self):
+        p = Person("Juan", "?")
+        x = 4
+        self.assertEquals(p.age(),3)
+    def test_y(self):
+        p = Person("Juan", "?")
+        self.assertEquals(p.name(),"Juan")""")
 
 
 
