@@ -22,9 +22,17 @@ class DuplicatedSetupVisitor(WarningNodeVisitor):
             if isinstance(node.args[0], Name):
                 valor = ''
                 for arg in node.args:
-                    valor = valor + arg.id
+                    if isinstance(arg, Name):
+                        valor = valor + arg.id
+                    elif isinstance(arg, Constant):
+                        valor = valor + str(arg.value)
             if isinstance(node.args[0], Constant):
                 valor = node.args[0].value
+            if isinstance(node.args[0], BinOp):
+                valor = ''
+                valor = valor + node.args[0].left.id
+                valor = valor + node.args[0].right.id
+                valor = valor + str(node.args[1].value)
             tupla_call = (atributo, valor)
         self.lista.append(tupla_call)
 
@@ -36,26 +44,22 @@ class DuplicatedSetupVisitor(WarningNodeVisitor):
 
     def visit_ClassDef(self, node: ClassDef):
         NodeVisitor.generic_visit(self, node)
-        print(self.diccionario)
         for key in self.diccionario.keys():
             test1 = key
-        # del self.diccionario[test1]
-        ## necesito poder recorrer la wea sin que se compare con si mismo 
-        igual = False
-        for i in range(0,len(self.diccionario[test1])-1):
+        # igual = True
+        for i in range(0,len(self.diccionario[test1])):
+            igual = True
             for key in self.diccionario.keys():
-                if self.diccionario[test1][i] == self.diccionario[key][i]:
-                    print('entro igual')
-                    print(self.diccionario[test1][i], self.diccionario[key][i])
-                    igual = True
-                else:
-                    igual = False
-                if igual:
-                    self.contador +=1
-                i += 1
-        self.contador = self.contador // len(self.diccionario.keys())
-        # print('resultado', self.contador)
-        self.addWarning('DuplicatedSetup', self.contador, 'there are ' + str(self.contador) + ' duplicated setup statements') 
+                if test1 != key:
+                    if self.diccionario[test1][i] != self.diccionario[key][i]:
+                        igual = False
+                        break
+            if igual:
+                self.contador +=1
+            else:
+                break
+        if self.contador > 0:
+            self.addWarning('DuplicatedSetup', self.contador, 'there are ' + str(self.contador) + ' duplicated setup statements') 
 
 class DuplicatedSetupRule(Rule):
     #  Implementar Clase
