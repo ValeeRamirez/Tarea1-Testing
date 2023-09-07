@@ -1,3 +1,7 @@
 # Tarea1-Testing
 
-Hola pipi <3 
+María Pía Cabrera
+Se encargo de toda la parte de transformaciones
+
+Valentina Ramírez
+Se encargo de toda la parte de alertas
